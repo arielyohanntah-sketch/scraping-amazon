@@ -1,6 +1,6 @@
 # Projet de web scraping Amazon
 
-Application console Python organisée selon le modèle MVC. Le projet recherche des écouteurs sur Amazon.fr avec Selenium, enregistre les informations dans un fichier CSV et dans SQLite, et calcule quelques statistiques de prix.
+Application console Python organisée selon le modèle MVC. Le projet recherche des produits sur Amazon.fr avec Selenium, enregistre les informations dans un fichier CSV et dans SQLite, et calcule quelques statistiques de prix.
 
 ## Informations récupérées
 
