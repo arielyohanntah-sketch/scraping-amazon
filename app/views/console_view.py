@@ -12,7 +12,7 @@ class ConsoleView:
         """Demande le produit ou le mot-clé à chercher sur Amazon."""
         while True:
             reponse = input(
-                "Mot-clé à rechercher sur Amazon (ex. iPhone, JBL, Lenovo) : "
+                "Veuillez entrer les produits à rechercher sur Amazon (ex. iPhone, JBL, Lenovo) : "
             ).strip()
             if reponse:
                 return reponse
