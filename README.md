@@ -1,33 +1,39 @@
 # Projet de web scraping Amazon
 
-Application console Python organisée selon le modèle MVC. Le projet recherche des écouteurs sur Amazon.fr avec Selenium, enregistre les informations dans un fichier CSV et dans SQLite, et calcule quelques statistiques de prix.
+Ce projet a été réalisé dans le cadre d'un cours de programmation Python. Il me permet de pratiquer le web scraping avec Selenium en recherchant des produits sur Amazon.fr.
+
+Le programme demande un mot-clé, par exemple `iPhone`, `JBL` ou `montres`. Il récupère quelques informations sur les produits trouvés, puis les enregistre dans des fichiers CSV et dans une base SQLite. Il affiche aussi des statistiques simples sur les prix.
 
 ## Informations récupérées
 
-- Nom et prix du produit
-- Marque et description, si elles sont présentes sur la page produit
-- Lien de l'image et chemin de l'image enregistrée localement
-- Lien de la page du produit
+Selon les informations présentes sur Amazon, le programme essaie de récupérer :
 
-Le programme traite au maximum cinq produits par page de résultats. Les informations qui ne sont pas trouvées restent vides.
+- le nom et le prix du produit ;
+- la marque et la description, quand elles sont disponibles ;
+- le lien de l'image et une copie de l'image dans le dossier du projet ;
+- le lien de la page du produit.
 
-## Structure du projet
+Pour limiter la taille d'une collecte, le programme traite au maximum cinq produits par page. Le nombre de pages à parcourir et les délais d'attente se règlent dans `config.py`.
+
+## Organisation des fichiers
 
 ```text
 app/
-├── controllers/       Coordination des étapes du programme
+├── controllers/       Lance et coordonne les différentes étapes
 ├── models/            Produit et accès à la base SQLite
-├── scraper/           Selenium, analyse des pages et images
-└── views/             Console et export CSV
-config.py              Valeurs par défaut et délais d'attente
-main.py                Point de départ du programme
-requirements.txt       Dépendances Python
-data/                  Fichiers CSV, images et base SQLite créés à l'exécution
+├── scraper/           Navigation Amazon et lecture des pages
+└── views/             Affichage dans la console et export CSV
+config.py              Catégorie, limites et délais
+main.py                Démarrage du programme
+requirements.txt       Bibliothèques nécessaires
+data/                  Fichiers créés pendant les recherches
 ```
+
+Le code est organisé en MVC : le modèle représente et enregistre les produits, la vue s'occupe de l'affichage et des fichiers CSV, et le contrôleur relie ces étapes. Le dossier `scraper` contient le code Selenium qui ouvre les pages et récupère les informations.
 
 ## Installation
 
-Dans un terminal ouvert à la racine du projet, crée et active l'environnement virtuel, puis installe Selenium :
+Ouvre un terminal dans le dossier du projet, puis crée et active l'environnement virtuel. Installe ensuite les dépendances :
 
 ```powershell
 python -m venv .venv
@@ -35,17 +41,19 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Chrome doit être installé. Selenium Manager s'occupe normalement de trouver le pilote correspondant lors du lancement.
+Le projet utilise Chrome. Selenium Manager cherche le pilote nécessaire au lancement du programme.
 
-## Lancement
+## Lancer une recherche
+
+Dans le même terminal, lance :
 
 ```powershell
 python main.py
 ```
 
-La console demande le mot-clé à chercher sur Amazon (par exemple `iPhone`, `JBL` ou `montres`). Le projet classe les recherches dans la catégorie générale `tech`, puis dans un sous-dossier nommé d'après le mot-clé. La pagination est conservée dans le scraper et son nombre de pages se règle dans `config.py`.
+Entre le mot-clé que tu veux rechercher quand le programme le demande. Les résultats sont rangés dans un dossier sous `data/tech/`, nommé à partir du mot-clé.
 
-## Fichiers générés
+## Résultats d'une recherche
 
 ```text
 data/
@@ -57,17 +65,8 @@ data/
         └── images/
 ```
 
-data.csv contient les produits de la dernière collecte. recap.csv récapitule les sous-catégories collectées et leur nombre de produits. produits.db contient les produits de la dernière collecte et sert au calcul des statistiques. Le dossier images contient les fichiers image téléchargés quand leur lien est disponible.
+`data.csv` contient les produits de cette recherche et `images/` contient les images téléchargées. `recap.csv` résume les recherches enregistrées. La base `produits.db` sert à conserver les produits et à calculer les statistiques de la collecte.
 
-## Organisation MVC
+## À savoir
 
-- **Modèle** : Produit décrit un produit et Depot lit ou écrit les données SQLite.
-- **Vue** : ConsoleView gère les échanges dans le terminal et ExportView écrit les CSV.
-- **Contrôleur** : ScrapingController coordonne la collecte, le filtrage et les sauvegardes.
-- **Scraper** : AmazonScraper utilise Selenium pour naviguer et les fonctions de parsing.py pour lire les éléments de page.
-
-## Réglages
-
-Modifie config.py pour régler le nombre de pages, les délais d'attente ou le nombre maximum de produits traités sur chaque page. Les fichiers de chaque collecte sont rangés dans un dossier nommé d'après le mot-clé recherché.
-
-Les sélecteurs CSS de app/scraper/parsing.py ont été comparés à une page de résultats et à une fiche produit Amazon.fr. La structure du site peut changer : vérifie-les de nouveau si le programme ne trouve plus certaines informations.
+Amazon peut modifier la présentation de ses pages. Si le programme ne trouve plus les produits ou certaines informations, les sélecteurs CSS utilisés dans `app/scraper/parsing.py` devront peut-être être vérifiés. Les champs absents sur une page restent vides dans les résultats.
